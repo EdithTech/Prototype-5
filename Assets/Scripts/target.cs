@@ -7,8 +7,14 @@ public class target : MonoBehaviour
     [SerializeField] float _minForce = 12f;
     [SerializeField] float _maxForce = 16f;
     [SerializeField] float _xRange = 4f;
-    [SerializeField] float _yPos = -6f;
+    [SerializeField] float _yPos = -2f;
     [SerializeField] float _torque = 10f;
+
+    [SerializeField] int scoreValue;
+
+    [SerializeField] ParticleSystem explosionParticle;
+
+    GameManager gameManager;
 
     Rigidbody targetRB;
 
@@ -19,6 +25,8 @@ public class target : MonoBehaviour
         targetRB.AddForce(randomUpFor(), ForceMode.Impulse);
         targetRB.AddTorque(ranTorque(), ranTorque(), ranTorque(), ForceMode.Impulse);
         transform.position = randomXPos();
+
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
     }
 
     Vector3 randomUpFor()
@@ -38,17 +46,18 @@ public class target : MonoBehaviour
 
     void OnMouseDown(){
         Destroy(gameObject);
+        gameManager.updateScore(scoreValue);
+        Instantiate(explosionParticle, transform.position, Quaternion.identity);
     }
 
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        if(transform.position.y < _yPos){
+    void OnTriggerEnter(Collider other){
+        if(other.CompareTag("Sensor")){
             Destroy(gameObject);
         }
-       
+
+        if(!gameObject.CompareTag("Bad") && other.CompareTag("Sensor")){
+            gameManager.gameOver();
+        }
     }
 
     
