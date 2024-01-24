@@ -34,7 +34,8 @@ public class target : MonoBehaviour
         return Vector3.up * Random.Range(_minForce, _maxForce);
     }
 
-    float ranTorque(){
+    float ranTorque()
+    {
         return Random.Range(-_torque, _torque);
     }
 
@@ -44,21 +45,40 @@ public class target : MonoBehaviour
     }
 
 
-    void OnMouseDown(){
-        Destroy(gameObject);
-        gameManager.updateScore(scoreValue);
-        Instantiate(explosionParticle, transform.position, Quaternion.identity);
-    }
+    // void OnMouseDown()
+    // {
 
-    void OnTriggerEnter(Collider other){
-        if(other.CompareTag("Sensor")){
+    // }
+
+    void OnTriggerEnter(Collider other)
+    {
+        
+        if (other.CompareTag("Sensor"))
+        {
             Destroy(gameObject);
         }
 
-        if(!gameObject.CompareTag("Bad") && other.CompareTag("Sensor")){
-            gameManager.gameOver();
+        if (!gameObject.CompareTag("Bad") && other.CompareTag("Sensor"))
+        {
+            gameManager.lives--;
+            gameManager.updateLives(gameManager.lives);
         }
     }
 
-    
+    public void DestroyTarget()
+    {
+        if (!gameManager.isGameOver)
+        {
+            if (gameObject.CompareTag("Bad"))
+            {
+                gameManager.lives--;
+                gameManager.updateLives(gameManager.lives);
+            }
+            Destroy(gameObject);
+            gameManager.updateScore(scoreValue);
+            Instantiate(explosionParticle, transform.position, Quaternion.identity);
+        }
+    }
+
+
 }
